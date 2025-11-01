@@ -102,6 +102,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     ```
 
    ![Top Companies](images/top_10_companies_complaint_volume.png)
+  <img width="1382" height="581" alt="top_10_companies_complaint_volume" src="https://github.com/user-attachments/assets/1dcc2f3e-2dd4-480b-9d79-8bab716b2033" />
 
 3. **Top Complaint Issues**  
    *Displays the most common issues raised by consumers*
@@ -138,6 +139,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     ```
    
    ![Top Issues](images/top_10_consumer_issues.png)
+<img width="1266" height="623" alt="company_top_3_issues" src="https://github.com/user-attachments/assets/b1ea0032-4a4e-42bb-9d06-c2881e8ef96f" />
 
 4. **Disputed vs Non-Disputed Complaints**  
    *Shows how many consumers disputed the company’s response*
@@ -173,8 +175,10 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     ```
    
    ![Dispute Chart](images/consumer_dispute.png)
+   <img width="1222" height="622" alt="top_10_consumer_dispute" src="https://github.com/user-attachments/assets/6ac26868-4c27-466c-a100-871e0e6cad84" />
 
-5. **Timely vs Untimely Responses**  
+
+6. **Timely vs Untimely Responses**  
    *Analyzes how quickly companies respond to complaints*
     ```python
     timely_summary = (
@@ -192,9 +196,11 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     print(timely_summary)
 
     ```
+    <img width="486" height="167" alt="Timely_response" src="https://github.com/user-attachments/assets/a8fbdb70-2d9d-41de-ac1c-3bb83025165c" />
+
    ![Timely Response](images/timely_vs_untimely.png)
 
-6. **Complaints by Submission Channel**  
+7. **Complaints by Submission Channel**  
    *Visualizes the percentage of complaints submitted via each channel (Web, Phone, Email, etc.)
     
     ```python 
@@ -205,6 +211,8 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     .sort_values(by='number_of_records', ascending=False))
 
   ![Submitted Via](images/Submitted_via_visual.png)
+  
+  <img width="608" height="488" alt="Submitted_via" src="https://github.com/user-attachments/assets/ff760ca6-50a3-4156-9d98-e629dc48402f" />
 
 7. **Complaint Trend Over Time**  
    *Daily complaint trend line showing peaks and drops over time*
@@ -215,9 +223,12 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     .reset_index())
    ```
      
-   ![Daily Complaint](images/daily_complaint.png)
+  
+   <img width="1778" height="585" alt="daily_consumer_complaint" src="https://github.com/user-attachments/assets/f9dcc967-a533-4ef5-b3d2-33c0508b9921" />
 
-8. **Top 10 State by complaint volume**
+  <img width="1777" height="581" alt="Weekly_consumer_complaint" src="https://github.com/user-attachments/assets/80963ed0-3f67-4664-a3d9-5c1f842faa8d" />
+
+9. **Top 10 State by complaint volume**
    ```python 
 
     state_complaints = (
@@ -229,10 +240,9 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
     # Display top 10 states
     print(state_complaints.head(10))
     ```
+   <img width="1790" height="576" alt="State_volume_10" src="https://github.com/user-attachments/assets/74205753-d945-4955-9204-ae50ccf3ab67" />
 
-   ![State_volume_10](https://github.com/user-attachments/assets/98ce16fd-a799-407e-a323-63543e604e7e)
-
-9. **Companies responses to consumers**
+10. **Companies responses to consumers**
 ```python
     # Company response type
 response_summary = (
@@ -249,7 +259,8 @@ response_summary['percentage'] = (
 
 print(response_summary)
 ```
-![Response_to_consumer](https://github.com/user-attachments/assets/933d4674-f32f-43f3-bb98-55c62468bcd5)
+
+<img width="1251" height="771" alt="Response_to_consumer" src="https://github.com/user-attachments/assets/07d70e64-69cc-4697-b34b-6dc3c1d26601" />
 
 10. **In Progress**
   ```python
@@ -297,12 +308,14 @@ print(f" In-Progress Percentage: {in_progress_percent:.2f}%")
 The Tableau dashboard includes:
 - Total complaints by company and issue  
 - Disputed vs Timely complaint rates  
-- Submission channel and trend analysis  
+- Submission channel and trend analysis
+- Key KPIs for dispute and resolution performance   
 
 ![Dashboard](images/Final_dashboard.png)
 
 ## 🔗 Project Links
-- **Tableau Public Dashboard:** []
+Explore the interactive dashboard on Tableau Public: 
+- [Credit Card Complaints Dashboard](https://public.tableau.com/views/CreditCardDashboardtableau/CreditCardComplaintsDashboard?:language=en-US&publish=yes&:display_count=n&:origin=viz_share_link)
 
  ## ✨ Developed by: Blessing Igwe
 
