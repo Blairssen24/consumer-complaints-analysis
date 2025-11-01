@@ -1,4 +1,4 @@
-# 🏦 CFPB Consumer Complaints Analysis | Python + Tableau
+# 🏦 CFPB Credit Card Complaints Analysis | Python + Tableau
 Data-driven insights into consumer complaints, company responses, and dispute patterns
 
 ## 📊 Project Overview
@@ -64,33 +64,206 @@ Steps performed in Python:
 
 1. **Total Complaints Overview**  
    *Shows the total complaints received and rolling 12-month trend*  
-    ![Total Complaints](images/Total_complaint.png)
    
-    <img width="470" height="162" alt="Total_complaint" src="https://github.com/user-attachments/assets/a9d60f7b-f29b-4a31-a5d6-2883e6ee2413" />
+#### Code Snippet (Total Complaints, Rolling 12 Months)
+```python
+# Total Complaints
+total_complaints = credit_df.shape[0]
+print("Total Complaints:", total_complaints)
 
-3. **Top 10 Companies by Complaint Volume**  
-   *Highlights which companies received the most complaints*  
+# Rolling 12 Months
+# Convert date column
+credit_df['date_received'] = pd.to_datetime(credit_df['date_received'], errors='coerce')
+
+# Define 12-month rolling window
+max_date = credit_df['date_received'].max()
+rolling_start = (max_date - pd.DateOffset(months=11)).replace(day=1)
+
+rolling_df = credit_df[
+    (credit_df['date_received'] >= rolling_start) &
+    (credit_df['date_received'] <= max_date)
+]
+
+rolling_12m_complaints = rolling_df.shape[0]
+
+print(f"Rolling 12-month window: {rolling_start.strftime('%b %Y')} → {max_date.strftime('%b %Y')}")
+print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
+```
+![Total Complaints](images/Total_complaint.png)
+<img width="470" height="162" alt="Total_complaint" src="https://github.com/user-attachments/assets/96a52349-4898-43e7-b96d-2cb0b081d5b3" />
+
+2. **Top 10 Companies by Complaint Volume**  
+   *Highlights which companies received the most complaints*
+   ```python
+   company_complaints = (
+    credit_df.groupby('company', as_index=False)['number_of_records']
+    .sum()
+    .sort_values(by='number_of_records', ascending=False)) company_complaints.head(10)
+    ```
+
    ![Top Companies](images/top_10_companies_complaint_volume.png)
 
-4. **Top Complaint Issues**  
-   *Displays the most common issues raised by consumers*  
+3. **Top Complaint Issues**  
+   *Displays the most common issues raised by consumers*
+   
+   ```python
+    top_issues = (
+    credit_df.groupby('issue')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False)
+    .head(10))
+
+
+    fig = px.bar(
+    top_issues,
+    x='number_of_records',
+    y='issue',
+    orientation='h',
+    title='Top 10 Consumer Complaint Issues',
+    text='number_of_records',
+    color='number_of_records',
+    color_continuous_scale='Tealgrn')
+
+
+    fig.update_traces(textposition='outside')
+    fig.update_layout(
+    yaxis=dict(title='Issue', autorange='reversed'),
+    xaxis_title='Number of Complaints',
+    showlegend=False)
+
+
+    fig.show()
+
+    ```
+   
    ![Top Issues](images/top_10_consumer_issues.png)
 
-5. **Disputed vs Non-Disputed Complaints**  
-   *Shows how many consumers disputed the company’s response*  
+4. **Disputed vs Non-Disputed Complaints**  
+   *Shows how many consumers disputed the company’s response*
+   ```python
+    dispute_summary = (
+    credit_df.groupby('consumer_disputed?')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
+
+
+    dispute_summary['percentage'] = (
+    dispute_summary['number_of_records'] / dispute_summary['number_of_records'].sum() * 100 ).round(2)
+
+
+
+    print(dispute_summary)
+
+    fig = px.pie(
+    dispute_summary,
+    names='consumer_disputed?',
+    values='number_of_records',
+    color='consumer_disputed?',
+    color_discrete_sequence=px.colors.sequential.RdBu,
+    title='Consumer Dispute Status',
+    hole=0.4)
+
+    fig.update_traces(
+    textinfo='label+percent+value',
+    pull=[0.05 if x == 'Yes' else 0 for x in dispute_summary['consumer_disputed?']])
+
+    fig.show()
+    ```
+   
    ![Dispute Chart](images/consumer_dispute.png)
 
-6. **Timely vs Untimely Responses**  
-   *Analyzes how quickly companies respond to complaints*  
+5. **Timely vs Untimely Responses**  
+   *Analyzes how quickly companies respond to complaints*
+    ```python
+    timely_summary = (
+    credit_df.groupby('timely_response?')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
+
+
+    timely_summary['percentage'] = (
+    timely_summary['number_of_records'] / timely_summary['number_of_records'].sum() * 100 ).round(2)
+
+
+    # Display the summary table
+    print(timely_summary)
+
+    ```
    ![Timely Response](images/timely_vs_untimely.png)
 
-7. **Complaints by Submission Channel**  
-   *Visualizes the percentage of complaints submitted via each channel (Web, Phone, Email, etc.)*  
-   ![Submitted Via](images/Submitted_via_visual.png)
+6. **Complaints by Submission Channel**  
+   *Visualizes the percentage of complaints submitted via each channel (Web, Phone, Email, etc.)
+    
+    ```python 
+    submitted_via = (
+    credit_df.groupby('submitted_via')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
 
-8. **Complaint Trend Over Time**  
-   *Daily complaint trend line showing peaks and drops over time*  
+  ![Submitted Via](images/Submitted_via_visual.png)
+
+7. **Complaint Trend Over Time**  
+   *Daily complaint trend line showing peaks and drops over time*
+   ```python 
+   daily_trend = (
+    credit_df.groupby('date_received')['number_of_records']
+    .sum()
+    .reset_index())
+   ```
+     
    ![Daily Complaint](images/daily_complaint.png)
+
+8. **Top 10 State by complaint volume**
+   ```python 
+
+    state_complaints = (
+    credit_df.groupby('state')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
+
+    # Display top 10 states
+    print(state_complaints.head(10))
+    ```
+
+   ![State_volume_10](https://github.com/user-attachments/assets/98ce16fd-a799-407e-a323-63543e604e7e)
+
+9. **Companies responses to consumers**
+```python
+    # Company response type
+response_summary = (
+    filtered_df.groupby('company_response_to_consumer')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
+
+# percentage of total
+response_summary['percentage'] = (
+    response_summary['number_of_records'] / response_summary['number_of_records'].sum() * 100
+).round(2)
+
+
+print(response_summary)
+```
+![Response_to_consumer](https://github.com/user-attachments/assets/933d4674-f32f-43f3-bb98-55c62468bcd5)
+
+10. **In Progress**
+  ```python
+in_progress_count = credit_df[
+    credit_df['company_response_to_consumer'].str.lower() == 'in progress'
+].shape[0]
+
+in_progress_percent = (in_progress_count / total_complaints) * 100
+
+print(f" In-Progress Complaints: {in_progress_count:,}")
+print(f" In-Progress Percentage: {in_progress_percent:.2f}%")
+
+```
+<img width="482" height="160" alt="In_progress" src="https://github.com/user-attachments/assets/49b8338b-d521-469c-9ebe-5267f9b846dd" />
 
 ## 🧾 KPIs & Definitions
 
@@ -102,6 +275,7 @@ Steps performed in Python:
 | Disputed Complaints Rate | % of complaints consumers marked as “Disputed” | (`Disputed="Yes"` ÷ Total Complaints) × 100 | Measure dissatisfaction |
 | Avg. Days to Respond | Average days between received and sent dates | Mean(`avg_no_of_days`) | Measure operational efficiency |
 | Top Complaint Issue | Most frequent issue raised | Mode(`issue`) | Identify recurring problems |
+
 
 ## 💡 Key Insights
 
@@ -128,8 +302,9 @@ The Tableau dashboard includes:
 ![Dashboard](images/Final_dashboard.png)
 
 ## 🔗 Project Links
-- **Tableau Public Dashboard:** [Add your Tableau link here]  
-- **GitHub Repository:** [Your GitHub Repo Link]
+- **Tableau Public Dashboard:** []
+
+ ## ✨ Developed by: Blessing Igwe
 
 ---
 
