@@ -1,6 +1,35 @@
 # 🏦 CFPB Credit Card Complaints Analysis | Python + Tableau
 Data-driven insights into consumer complaints, company responses, and dispute patterns
 
+---
+
+## 📘 Table of Contents
+
+1. [Project Overview](#-project-overview)
+2. [Business Problem Statement](#-business-problem-statement)
+3. [Tools & Technologies](#-tools--technologies)
+4. [Dataset Overview](#-dataset-overview)
+5. [Data Cleaning Process](#-data-cleaning-process)
+6. [Exploratory Data Analysis (EDA)](#-exploratory-data-analysis-eda)
+    - [Total Complaints Overview](#total-complaints-overview)
+    - [Top 10 Companies by Complaint Volume](#top-10-companies-by-complaint-volume)
+    - [Companies Responses to Consumers](#companies-responses-to-consumers)
+    - [In Progress](#in-progress)
+    - [Disputed vs Non-Disputed Complaints](#disputed-vs-non-disputed-complaints)
+    - [Top Complaint Issues](#top-complaint-issues)
+    - [Timely vs Untimely Responses](#timely-vs-untimely-responses)
+    - [Complaint Trend Over Time](#complaint-trend-over-time)
+    - [Complaints by Submission Channel](#complaints-by-submission-channel)
+    - [Top 10 States by Complaint Volume](#top-10-states-by-complaint-volume)
+7. [KPIs & Definitions](#-kpis--definitions)
+8. [Key Insights](#-key-insights)
+9. [Recommendations](#-recommendations)
+10. [Tableau Dashboard Preview](#-tableau-dashboard-preview)
+11. [Conclusion](#-conclusion)
+12. [Project Links](#-project-links)
+
+
+
 ## 📊 Project Overview
 
 This project analyzes consumer complaints data from the **Consumer Financial Protection Bureau (CFPB)** to uncover insights into:
@@ -141,7 +170,41 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
    ![Top Issues](images/top_10_consumer_issues.png)
 <img width="1266" height="623" alt="company_top_3_issues" src="https://github.com/user-attachments/assets/b1ea0032-4a4e-42bb-9d06-c2881e8ef96f" />
 
-4. **Disputed vs Non-Disputed Complaints**  
+4. **Companies responses to consumers**
+```python
+    # Company response type
+response_summary = (
+    filtered_df.groupby('company_response_to_consumer')['number_of_records']
+    .sum()
+    .reset_index()
+    .sort_values(by='number_of_records', ascending=False))
+
+# percentage of total
+response_summary['percentage'] = (
+    response_summary['number_of_records'] / response_summary['number_of_records'].sum() * 100
+).round(2)
+
+
+print(response_summary)
+```
+
+<img width="1251" height="771" alt="Response_to_consumer" src="https://github.com/user-attachments/assets/07d70e64-69cc-4697-b34b-6dc3c1d26601" />
+
+5. **In Progress**
+  ```python
+in_progress_count = credit_df[
+    credit_df['company_response_to_consumer'].str.lower() == 'in progress'
+].shape[0]
+
+in_progress_percent = (in_progress_count / total_complaints) * 100
+
+print(f" In-Progress Complaints: {in_progress_count:,}")
+print(f" In-Progress Percentage: {in_progress_percent:.2f}%")
+
+```
+<img width="482" height="160" alt="In_progress" src="https://github.com/user-attachments/assets/49b8338b-d521-469c-9ebe-5267f9b846dd" />
+
+6. **Disputed vs Non-Disputed Complaints**  
    *Shows how many consumers disputed the company’s response*
    ```python
     dispute_summary = (
@@ -178,7 +241,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
    <img width="1222" height="622" alt="top_10_consumer_dispute" src="https://github.com/user-attachments/assets/6ac26868-4c27-466c-a100-871e0e6cad84" />
 
 
-6. **Timely vs Untimely Responses**  
+7. **Timely vs Untimely Responses**  
    *Analyzes how quickly companies respond to complaints*
     ```python
     timely_summary = (
@@ -200,7 +263,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
 
    ![Timely Response](images/timely_vs_untimely.png)
 
-7. **Complaints by Submission Channel**  
+8. **Complaints by Submission Channel**  
    *Visualizes the percentage of complaints submitted via each channel (Web, Phone, Email, etc.)
     
     ```python 
@@ -214,7 +277,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
   
   <img width="608" height="488" alt="Submitted_via" src="https://github.com/user-attachments/assets/ff760ca6-50a3-4156-9d98-e629dc48402f" />
 
-7. **Complaint Trend Over Time**  
+9. **Complaint Trend Over Time**  
    *Daily complaint trend line showing peaks and drops over time*
    ```python 
    daily_trend = (
@@ -228,7 +291,7 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
 
   <img width="1777" height="581" alt="Weekly_consumer_complaint" src="https://github.com/user-attachments/assets/80963ed0-3f67-4664-a3d9-5c1f842faa8d" />
 
-9. **Top 10 State by complaint volume**
+10. **Top 10 State by complaint volume**
    ```python 
 
     state_complaints = (
@@ -239,42 +302,10 @@ print(f"Rolling 12-month complaints: {rolling_12m_complaints:,}")
 
     # Display top 10 states
     print(state_complaints.head(10))
-    ```
+  
    <img width="1790" height="576" alt="State_volume_10" src="https://github.com/user-attachments/assets/74205753-d945-4955-9204-ae50ccf3ab67" />
 
-10. **Companies responses to consumers**
-```python
-    # Company response type
-response_summary = (
-    filtered_df.groupby('company_response_to_consumer')['number_of_records']
-    .sum()
-    .reset_index()
-    .sort_values(by='number_of_records', ascending=False))
-
-# percentage of total
-response_summary['percentage'] = (
-    response_summary['number_of_records'] / response_summary['number_of_records'].sum() * 100
-).round(2)
-
-
-print(response_summary)
-```
-
-<img width="1251" height="771" alt="Response_to_consumer" src="https://github.com/user-attachments/assets/07d70e64-69cc-4697-b34b-6dc3c1d26601" />
-
-10. **In Progress**
-  ```python
-in_progress_count = credit_df[
-    credit_df['company_response_to_consumer'].str.lower() == 'in progress'
-].shape[0]
-
-in_progress_percent = (in_progress_count / total_complaints) * 100
-
-print(f" In-Progress Complaints: {in_progress_count:,}")
-print(f" In-Progress Percentage: {in_progress_percent:.2f}%")
-
-```
-<img width="482" height="160" alt="In_progress" src="https://github.com/user-attachments/assets/49b8338b-d521-469c-9ebe-5267f9b846dd" />
+  ```
 
 ## 🧾 KPIs & Definitions
 
@@ -312,6 +343,17 @@ The Tableau dashboard includes:
 - Key KPIs for dispute and resolution performance   
 
 ![Dashboard](images/Final_dashboard.png)
+
+## 🧭 Conclusion
+
+The Consumer Complaints Analysis project provided deep insights into how financial companies respond to customer grievances submitted to the **Consumer Financial Protection Bureau (CFPB)**.  
+
+By leveraging **Python for data processing** and **Tableau for visualization**, the analysis revealed key trends in consumer behavior, company performance, and issue categories — particularly around **timely response rates**, **disputed cases**, and **submission channels**.
+
+The findings emphasize the need for companies to improve their **response efficiency** and **consumer dispute handling**, especially in high-complaint states and product categories.  
+
+This project demonstrates the power of data analytics in driving transparency and accountability in the financial sector — empowering both regulators and businesses to make data-driven decisions that enhance consumer trust and experience.
+
 
 ## 🔗 Project Links
 Explore the interactive dashboard on Tableau Public: 
